@@ -10,56 +10,59 @@
 
 @implementation HappinessViewController
 
+@synthesize faceView, slider;
+@synthesize happiness;
 
-
-/*
-// The designated initializer. Override to perform setup that is required before the view is loaded.
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
+-(void)updateUI
+{
+	self.slider.value = self.happiness;
+	[self.faceView setNeedsDisplay];
 }
-*/
 
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView {
+-(void)setHappiness:(int)newHappiness
+{
+	if (newHappiness < 0) newHappiness = 0;
+	if (newHappiness > 100) newHappiness = 100;
+	happiness = newHappiness;
+	[self updateUI];
 }
-*/
 
-
-/*
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void)viewDidLoad {
-    [super viewDidLoad];
+-(IBAction)happinessChanged:(UISlider *)sender
+{
+	self.happiness = sender.value;
 }
-*/
 
-
-/*
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+-(float)smileForFaceView:(FaceView *)requestor
+{
+	float smile = 0;
+	if (requestor == self.faceView) {
+		smile = (((float)self.happiness - 50) / 50);
+	}
+	return smile;
 }
-*/
 
-- (void)didReceiveMemoryWarning {
-	// Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-	
-	// Release any cached data, images, etc that aren't in use.
+-(void)viewDidLoad 
+{
+	[super viewDidLoad];
+	self.faceView.delegate = self;
+	[self updateUI];
+}
+
+-(void)releaseOutlets
+{
+	self.faceView = nil;
+	self.slider = nil;
 }
 
 - (void)viewDidUnload {
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
+	[self releaseOutlets];
 }
 
 
 - (void)dealloc {
+	[self releaseOutlets];
     [super dealloc];
 }
 
